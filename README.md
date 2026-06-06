@@ -1,48 +1,41 @@
 # Quest OS
 
-> An operating system for your quests, powered by Obsidian, Claude, and a daily loop that actually sticks.
+> Turn your goals into daily quests. Powered by Obsidian, Claude, and MCP.
 
----
+***
 
-## What is this?
+## The Problem with Goals
 
-I got tired of setting goals that die after two weeks.
+I've always wished my goals felt more like quests in a video game. Telling yourself to "learn Japanese" sounds like a chore. But framing it as "The N3 Fluency Quest" makes it an adventure. 
 
-You know how it goes. You get motivated, write a big plan, maybe even make a Notion board. Then life happens, you skip a few days, and suddenly you haven't touched it in a month. The plan is still there, perfectly formatted, completely ignored.
+But even with the right framing, I kept hitting a wall: the daily planning overhead. Every time I sat down to work, I wasted precious energy figuring out *what* to do. What should I study today? What needs reviewing? The mental cost of managing the project was eating into the time I had to actually execute it.
 
-**quest-os** is my answer to that. It's an Obsidian vault that turns any goal into a structured **journey** with daily quests, a tracker, and an AI coach (Claude) that keeps the whole thing alive.
+I needed a system where the planning happened once, and the execution happened daily, without friction.
 
-You tell Claude what you want to achieve. It builds out the entire system for you: strategy, timeline, skill tracker, daily quest format, everything. Then every day, you just say **"daily quest"** and Claude gives you exactly what to do today based on where you actually are, not where you hoped to be.
+## Enter Quest OS
 
-When you're done, you say **"submit quest"** and Claude evaluates your session, updates the tracker, and queues up your next review. That's the full loop.
+**Quest OS** is an Obsidian vault that acts as a local operating system for your ambitions. 
 
-It's not a to-do list. It's not a habit tracker. It's closer to a personal RPG system, except the quests are real and they compound.
+You define your goal exactly once. Claude (the AI) then generates a complete, structured journey system for you. It builds the strategy, the timeline, the tracker, and the map of your project.
 
----
+From that point on, you don't plan. Every day, you simply open your computer and tell Claude: **"daily quest"**. Claude reads your vault via MCP, analyzes your progress, and tells you exactly what to do. You complete the work, then say **"submit quest"**. Claude evaluates your session, updates your local trackers, and queues up future reviews.
 
-## Why "quest-os"?
+It is a closed-loop system that feels like a game and saves you from the burden of managing it yourself.
 
-Two parts:
+***
 
-- **Quest**: Because I wanted goals to feel like quests, not chores. Every day you get a small, clear mission. You do it. You level up. The framing matters more than people think.
-- **OS**: As in *operating system*. Not because it's an actual OS, but because it's the layer that runs underneath everything. Whatever goal you're chasing (a job, a language, a business), quest-os is the system that manages it. You plug in a goal, and the OS handles the structure, tracking, scheduling, and review.
+## What's Inside the Box?
 
-So: **quest-os** = an operating system for running quests on your life goals.
+The repository has a simple, modular structure:
 
-Also, it just sounds cool. I'm not gonna pretend that wasn't part of it.
-
----
-
-## What's inside
-
-```
+```text
 quest-os/
-├── Goal Journey Template/       ← The reusable system (start here)
-│   ├── 00 MOC.md                ← Map of Content: how everything connects
-│   ├── 01 Goal Input Format.md  ← How to write your goal so Claude gets it
-│   └── 02 Master Prompt.md      ← The prompt that generates your entire journey
+├── Goal Journey Template/       ← The core engine. Start here.
+│   ├── 00 MOC.md                
+│   ├── 01 Goal Input Format.md  
+│   └── 02 Master Prompt.md      
 │
-└── Japanese Fluency Journey/    ← A real example journey (JLPT N3 in 12 months)
+└── Japanese Fluency Journey/    ← A generated example journey
     ├── 00 MOC.md
     ├── 01 Context & Why.md
     ├── 02 Strategy.md
@@ -53,177 +46,79 @@ quest-os/
     ├── 07 Target List.md
     ├── 08 Budget & Resources.md
     ├── 09 Key Decisions.md
-    └── Vocab/                   ← Skill-specific tracker + daily quest context
+    └── Vocab/                   ← The local tracker and daily context
 ```
 
-The **Goal Journey Template** folder is the engine. The **Japanese Fluency Journey** is a working example of what it produces.
+***
 
----
+## The Setup Guide
 
-## How it works (the short version)
+To automate this loop, you need three pieces of software working in harmony:
 
-1. Write your goal using the format in `01 Goal Input Format.md`
-2. Paste the prompt from `02 Master Prompt.md` into Claude, with your goal filled in
-3. Claude generates an entire journey folder (10+ files). Save them in Obsidian.
-4. Every day: say **"daily quest"** → do the quests → say **"submit quest"**
-5. Repeat. That's it.
-
----
-
-## Setup Guide
-
-You need three things installed and running: **Claude Desktop**, **Docker Desktop**, and **Obsidian**. They work together like this:
-
-- **Obsidian**: where your notes and trackers live
-- **Claude Desktop**: the AI that reads your vault and generates daily quests
-- **Docker Desktop**: the bridge that connects Claude to Obsidian (via MCP)
-
-Let's set them up.
-
----
+1. **Obsidian**: The local database where your notes and trackers live.
+2. **Claude Desktop**: The AI orchestrator that generates and evaluates your daily quests.
+3. **Docker Desktop**: The invisible bridge running the MCP server, allowing Claude to read and write directly to your Obsidian vault.
 
 ### 1. Install Claude Desktop
 
-Claude Desktop is the local app for Anthropic's Claude. The AI still runs on Anthropic's cloud. You're just using the desktop app as the interface.
+Download the macOS or Windows app from [claude.ai/download](https://claude.ai/download) and sign in. The **free plan** works perfectly and includes the MCP support we need. There is a daily message limit, but it is generally enough to run your daily quest loop. Upgrading to Pro ($20/month) simply removes that cap.
 
-1. Go to [claude.ai/download](https://claude.ai/download)
-2. Download the macOS (or Windows) version
-3. Install and sign in with your Anthropic account
-4. The **free plan** works fine and includes MCP support. There's a daily message limit, but it's enough for the daily quest loop. If you find yourself hitting the limit often, the Pro plan ($20/month) removes that cap.
-
-> **Why Claude Desktop and not the web?** Because the desktop app supports MCP (Model Context Protocol), which is what lets Claude actually read and write to your Obsidian vault. The web version can't do that.
-
----
+> **Why the desktop app?** The web version of Claude cannot read your local files. The desktop app supports the Model Context Protocol (MCP), which is the key to automating Obsidian.
 
 ### 2. Install Docker Desktop
 
-Docker runs the MCP server that connects Claude to Obsidian. Think of it as the middleman. It takes requests from Claude ("read this note", "update this tracker") and forwards them to Obsidian's API.
+Docker runs the MCP server, acting as the middleman. Download it from [docker.com](https://www.docker.com/products/docker-desktop/) and install it. Once set up, just leave it running in the background.
 
-1. Go to [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)
-2. Download and install for your OS
-3. Open Docker Desktop and let it finish its initial setup
-4. Make sure Docker is **running** (you'll see the whale icon in your menu bar / system tray)
+### 3. Configure Obsidian
 
-You don't need to know Docker to use this. Just keep it running in the background.
+Download Obsidian from [obsidian.md](https://obsidian.md/). Open this repository as your vault by choosing `Open folder as vault` and selecting the `quest-os` folder.
 
----
+To expose Obsidian to Claude, install the necessary API plugin:
+1. Go to **Settings** > **Community plugins**.
+2. Turn off **Restricted mode**.
+3. Click **Browse** and install **"Local REST API"**.
+4. Enable the plugin, go to its settings, and **copy the API Key**. Leave the port as `27124`.
 
-### 3. Install Obsidian and Required Plugins
+> **Note:** Keep Obsidian open while using Quest OS. The API only functions while the application is running.
 
-#### Install Obsidian
+### 4. Wire Everything Together
 
-1. Go to [obsidian.md](https://obsidian.md/)
-2. Download and install
-3. Open Obsidian and create a new vault (or open this repo as a vault)
-   - If opening this repo: `Open folder as vault` → select the `quest-os` folder
+First, set up the server in Docker. Open Docker Desktop, navigate to the **MCP Toolkit** (or **MCP Catalog**), and add the **Obsidian MCP server**. In the settings, paste your **Obsidian API Key** into the secrets field, then start the server.
 
-#### Enable Community Plugins
+Next, connect Claude. In Docker Desktop's **Clients** section, find **Claude Desktop** and click **Connect**. Completely restart Claude Desktop (quit and reopen).
 
-1. Go to **Settings** → **Community plugins**
-2. Turn off **Restricted mode** (this allows third-party plugins)
-3. Click **Browse** to open the plugin catalog
+Finally, verify the connection. In Claude Desktop, click the tools icon (the plug symbol) in the chat input area. You should see `MCP_Docker` listed alongside tools like `obsidian_search` and `obsidian_update_note`. 
 
-#### Install the Local REST API Plugin
+***
 
-This is the plugin that lets external apps (Claude, through Docker) talk to your Obsidian vault.
+## Your First Quest
 
-1. In the community plugin browser, search for **"Local REST API"**
-2. Click **Install**, then **Enable**
-3. Go to the plugin's settings (Settings → Community plugins → Local REST API → ⚙️)
-4. You'll see an **API Key**. Copy this, as you'll need it in the next step.
-5. Note the port number (default is `27124`). Leave it as-is unless you have a conflict.
+With the machinery in place, starting is simple:
 
-> **Keep Obsidian open** whenever you're using quest-os. The REST API only works while Obsidian is running.
+1. Open `Goal Journey Template/01 Goal Input Format.md` and detail what you want to achieve.
+2. Copy the prompt from `Goal Journey Template/02 Master Prompt.md`.
+3. Open Claude Desktop, paste the prompt, and insert your goal.
+4. Claude will generate all the necessary files. Save each one into a new folder in your vault.
+5. Say **"daily quest"** to Claude to begin your very first day.
 
----
-
-### 4. Connect Everything Together
-
-Now wire Claude → Docker → Obsidian:
-
-#### Set up the Obsidian MCP Server in Docker
-
-1. Open **Docker Desktop**
-2. Look for the **MCP Toolkit** or **MCP Catalog** in the sidebar (Docker has built-in MCP support)
-3. Search for the **Obsidian MCP server** in the catalog
-4. Click the **+** to add it
-5. In the server settings, paste your **Obsidian API Key** (the one you copied from the Local REST API plugin) into the secrets/environment field
-6. Save and start the server
-
-#### Connect Claude Desktop to Docker
-
-1. In Docker Desktop, go to the **Clients** section
-2. Find **Claude Desktop** in the list
-3. Click **Connect**
-4. **Restart Claude Desktop** completely (quit and reopen)
-
-#### Verify the Connection
-
-1. Open Claude Desktop
-2. Look for the 🔌 or tools icon in the chat input area
-3. You should see **MCP_Docker** (or similar) listed with Obsidian tools like:
-   - `obsidian_search`
-   - `obsidian_create_note`
-   - `obsidian_get_note`
-   - `obsidian_update_note`
-   - etc.
-
-If you see those tools, you're good. Claude can now read and write to your vault.
-
----
-
-### 5. Quick Start
-
-Now that everything is connected:
-
-1. Open the `Goal Journey Template/01 Goal Input Format.md` and fill in your goal
-2. Copy the prompt from `Goal Journey Template/02 Master Prompt.md`
-3. Open Claude Desktop, paste the prompt, and replace `[PASTE YOUR GOAL INPUT HERE]` with your filled-in goal
-4. Claude will generate 10+ files. Save each one into a new journey folder in your vault.
-5. Say **"daily quest"** to start your first day
-
----
+***
 
 ## The Daily Loop
 
-Once your journey is set up, this is all you do every day:
+Once your system is established, your daily commitment is simple:
 
-```
-1. Open Claude Desktop (make sure Obsidian + Docker are running)
-2. Say: "daily quest"
-3. Claude reads your tracker, picks today's quests, outputs them
-4. Do the quests
-5. Say: "submit quest" with your session notes
-6. Claude evaluates, updates your tracker, done
-```
+Ensure Obsidian and Docker are running. Tell Claude, **"daily quest."** Step away and do the work it assigns. When finished, return and say, **"submit quest,"** providing any notes from your session. Claude updates your tracker, and your day is done.
 
-That's the whole system. Simple to run, hard to ignore.
-
----
+***
 
 ## Troubleshooting
 
-| Problem | Fix |
-|---|---|
-| Claude doesn't show MCP tools | Restart Claude Desktop. Make sure Docker is running and the Obsidian MCP server is started. |
-| "Connection refused" errors | Make sure Obsidian is open and the Local REST API plugin is enabled. Check the port (default: 27124). |
-| Docker MCP catalog is empty | Update Docker Desktop to the latest version. MCP support was added in recent releases. |
-| Claude can't find my notes | Make sure your vault path is correctly configured in the MCP server settings. The API key must match. |
-| Tools show up but fail silently | Check Docker Desktop logs for the MCP server container. Usually it's an API key mismatch. |
+- **Missing MCP tools:** Restart Claude Desktop. Ensure Docker is running the Obsidian MCP server.
+- **Connection refused:** Verify Obsidian is open and the Local REST API plugin is enabled.
+- **Tools fail silently:** This is usually a mismatch with your API key in the Docker settings.
 
----
+***
 
-## Creating a New Journey
+## A Final Word
 
-Want to chase a different goal? Just run the process again:
-
-1. Fill in a new goal using the input format
-2. Paste the master prompt with your new goal into Claude
-3. Save the generated files into a new folder (e.g., `FAANG SWE Journey/`)
-4. Each journey is independent, so you can run as many as you want.
-
----
-
-## License
-
-This is a personal system I built for myself. You're welcome to fork it, adapt it, break it, whatever. If it helps you actually finish something you've been putting off, that's all I care about.
+I built this system to turn my ambitions into structured, manageable adventures without the daily friction of project management. You are welcome to fork it, adapt it, or break it to suit your own needs. 
