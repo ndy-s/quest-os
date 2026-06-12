@@ -16,6 +16,10 @@ I needed a system where the planning happened once, and the execution happened d
 
 **Quest OS** is an Obsidian vault that acts as a local operating system for your ambitions. 
 
+**Why the name "Quest OS"?**
+- **Quest**: Goals often feel like chores ("learn Japanese", "grind LeetCode"). Framing them as quests turns them into engaging adventures with clear missions, phases, and daily actions.
+- **OS (Operating System)**: It acts as the underlying engine that automates all the planning, tracking, and execution logic. Just like an OS manages hardware so you can run apps, Quest OS manages the meta-work so you can just run your daily tasks.
+
 You define your goal exactly once. Claude (the AI) then generates a complete, structured journey system for you. It builds the strategy, the timeline, the tracker, and the map of your project.
 
 From that point on, you don't plan. Every day, you simply open your computer and tell Claude: **"daily quest"**. Claude reads your vault via MCP, analyzes your progress, and tells you exactly what to do. You complete the work, then say **"submit quest"**. Claude evaluates your session, updates your local trackers, and queues up future reviews.
@@ -88,6 +92,20 @@ First, set up the server in Docker. Open Docker Desktop, navigate to the **MCP T
 Next, connect Claude. In Docker Desktop's **Clients** section, find **Claude Desktop** and click **Connect**. Completely restart Claude Desktop (quit and reopen).
 
 Finally, verify the connection. In Claude Desktop, click the tools icon (the plug symbol) in the chat input area. You should see `MCP_Docker` listed alongside tools like `obsidian_search` and `obsidian_update_note`. 
+
+### 5. Set the Claude System Prompt
+
+To make sure Claude Desktop understands your context automatically without you explaining it every day, you need to set up custom instructions. 
+
+Open Claude Desktop, go to your settings or project instructions, and add the following prompt. Adjust the assistant role, your name, and the file path based on your generated journey. For example, using the `Japanese Fluency Journey` included in this repository:
+
+```text
+You are [Your Name]'s Japanese Fluency assistant. Your Obsidian vault is connected via MCP.
+
+When [Your Name] says "daily quest" or "submit quest", immediately read the file `Japanese Fluency Journey/Vocab/Daily Quest Context.md` from Obsidian first, then follow its instructions exactly — no need for [Your Name] to explain anything.
+
+Do not ask for clarification. Just read the context file and execute.
+```
 
 ***
 
